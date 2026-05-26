@@ -1,0 +1,39 @@
+@startuml
+
+title Диаграмма классов
+top to bottom direction
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+package "Сервис платежей" <<Rectangle>> {
+    package analytics {
+        package model {
+            package request {
+                package payment {}
+            }
+            package response {
+                package payment {}
+            }
+        }
+
+        class PaymentController
+        class PaymentService
+        class PaymentRepo
+        class PaymentSystemAdapter
+
+        model.request.payment --> PaymentController : получает запросы
+        PaymentController --> model.response.payment : отдает ответы
+        PaymentController --> PaymentService : передает запросы на обработку
+        PaymentService --> PaymentRepo : сохраняет и получает данные
+        PaymentService --> PaymentSystemAdapter : инициирует запрос на проведение платежа
+
+        note "пакеты со стандартными CRUD: запросы/ответы" as standard_crud_note
+        standard_crud_note .. model.request.payment
+        standard_crud_note .. model.response.payment
+    }
+}
+
+circle ExternalPaymentSystem
+PaymentSystemAdapter --> ExternalPaymentSystem : отправляет запрос на проведение платежа
+
+@enduml

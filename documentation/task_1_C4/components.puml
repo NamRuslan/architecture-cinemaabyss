@@ -1,0 +1,63 @@
+@startuml
+title Диаграмма компонентов
+top to bottom direction
+
+!include ../c4_templates/C4_Container.puml
+!include ../c4_templates/C4_Component.puml
+
+System_Boundary(app, "Приложение Cinema Abyss") {
+    Container(userContainer, "Сервис пользователей") {
+        Component(userController, "UserController", "Принимает и запросы на обработку данных пользователей")
+        Component(userService, "UserService", "Слой бизнес-логики, обработка данных пользователей")
+        Component(userRepo, "UserRepo", "Слой репозитория, постоянное хранение данных пользователей")
+
+        Rel(userController, userService, "Передает запросы на обработку")
+        Rel(userService, userRepo, "Передает данные на хранение, получает данные пользователей")
+    }
+
+    Container(movieContainer, "Сервис фильмов") {
+        Component(movieController, "MovieController", "Принимает запросы на обработку данных о фильмах и их жанрах")
+        Component(movieService, "MovieService", "Слой бизнес-логики, обработка данных о фильмах и их жанрах")
+        Component(movieRepo, "MovieRepo", "Слой репозитория, постоянное хранение данных о фильмах")
+        Component(movieGenreRepo, "MovieGenreRepo", "Слой репозитория, постоянное хранение данных о жанрах")
+
+        Rel(movieController, movieService, "Передает запросы на обработку")
+        Rel(movieService, movieRepo, "Передает данные на хранение, получает данные о фильмах")
+        Rel(movieService, movieGenreRepo, "Передает данные на хранение, получает данные о жанрах")
+    }
+
+    Container(paymentContainer, "Сервис платежей") {
+        Component(paymentController, "PaymentController", "Принимает запросы на обработку данных об оплате")
+        Component(paymentService, "PaymentService", "Слой бизнес-логики, обработка данных о платежах")
+        Component(paymentRepo, "PaymentRepo", "Слой репозитория, постоянное хранение данных о платежах")
+        Component(paymentSystemAdapter, "PaymentSystemAdapter", "Компонент для внешней интеграции с системой платежей")
+
+        Rel(paymentController, paymentService, "Передает запросы на обработку")
+        Rel(paymentService, paymentRepo, "Передает данные на хранение, получает данные о платежах")
+        Rel(paymentService, paymentSystemAdapter, "Передает запросы на интеграцию с внешней системой")
+    }
+
+    Container(subscriptionContainer, "Сервис подписок") {
+        Component(subscriptionController, "SubscriptionController", "Принимает запросы на обработку данных о подписках")
+        Component(subscriptionService, "SubscriptionService", "Слой бизнес-логики, обработка данных о подписках")
+        Component(subscriptionRepo, "SubscriptionRepo", "Слой репозитория, постоянное хранение данных о подписках")
+
+        Rel(subscriptionController, subscriptionService, "Передает запросы на обработку")
+        Rel(subscriptionService, subscriptionRepo, "Передает данные на хранение, получает данные о подписках")
+    }
+
+    Container(analyticsContainer, "Сервис аналитики") {
+        Component(analyticsController, "AnalyticsController", "Принимает запросы на обработку данных о просмотрах и рейтингах")
+        Component(analyticsService, "AnalyticsService", "Слой бизнес-логики, обработка данных о просмотрах и рейтингах")
+        Component(userViewRepo, "UserViewRepo", "Слой репозитория, постоянное хранение данных о просмотрах пользователей")
+        Component(userRatingRepo, "UserRatingRepo", "Слой репозитория, постоянное хранение данных о рейтингах пользователей")
+        Component(recommendationServiceRabbitMqAdapter, "RecommendationServiceRabbitMqAdapter", "Компонент для передачи аналитических данных в брокер сообщений")
+
+        Rel(analyticsController, analyticsService, "Передает запросы на обработку")
+        Rel(analyticsService, userViewRepo, "Передает данные на хранение, получает данные о просмотрах пользователей")
+        Rel(analyticsService, userRatingRepo, "Передает данные на хранение, получает данные о рейтингах пользователей")
+        Rel(analyticsService, recommendationServiceRabbitMqAdapter, "Передает аналитические данные для системы рекомендаций")
+    }
+}
+
+@enduml
