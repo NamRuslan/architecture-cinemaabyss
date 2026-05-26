@@ -1,0 +1,49 @@
+@startuml
+title Диаграмма контейнеров
+top to bottom direction
+
+!include ../c4_templates/C4_Container.puml
+
+Person(user, "Пользователь", "Просматривает и оценивает медиа, приобретает подписки.")
+Person(admin, "Администратор", "Администрирует систему")
+
+System_Boundary(app, "Приложение Cinema Abyss") {
+    Container(ios, "Мобильное приложение для iOS", "Предоставляет доступ к приложению с мобильных устройств iOS")
+    Container(android, "Мобильное приложение для Android", "Предоставляет доступ к приложению с мобильных и прочих устройств на Android")
+    Container(webApp, "Веб-сайт", "Предоставляет доступ к приложению через сайт")
+
+    System_Boundary(backend, "Backend") {
+        Container(apiGateway, "API Gateway", "Маршрутизирует запросы пользователей")
+        Container(authService, "Сервис авторизации", "Авторизацию пользователей")
+        Container(userService, "Сервис пользователей", "Домен пользователей, хранение и обработка их данных")
+        Container(movieService, "Сервис кино", "Домен контента фильмов, хранение и обработка их данных")
+        Container(paymentService, "Сервис платежей", "Обрабатывает запросы на оплату, хранит данные о проведенных платежах")
+        Container(subscriptionService, "Сервис подписок", "Домен подписок, хранение и обработка их данных")
+        Container(analyticsService, "Сервис аналитики", "Собирает и обрабатывает данные о просмотрах и оценках пользователей")
+        ContainerQueue(rabbit, "Брокер сообщений RabbitMQ", "Используется для интеграции с системой рекомендаций")
+    }
+}
+
+Container_Ext(recommendationSystem, "Система рекомендаций", "Вычисляет и предоставляет рекомендации пользователям")
+Container_Ext(extPaymentSystem, "Платежная система", "Обработка и осуществление платежей")
+Container_Ext(contentSources, "Источники контента", "Сторонние онлайн-кинотеатры и прочие площадки с медиа-контентом")
+
+Rel(user, ios, "Использует приложение")
+Rel(user, android, "Использует приложение")
+Rel(user, webApp, "Использует приложение")
+Rel(admin, webApp, "Администрирует приложение")
+Rel(ios, apiGateway, "Отправляет запросы")
+Rel(android, apiGateway, "Отправляет запросы")
+Rel(webApp, apiGateway, "Отправляет запросы")
+Rel(apiGateway, authService, "Авторизация пользователей")
+Rel(apiGateway, userService, "Регистрация пользователей, хранение, обработка и получение их данных")
+Rel(apiGateway, movieService, "Хранение, обработка и получение данных о медиа-контенте")
+Rel(apiGateway, paymentService, "Обработка запросов на оплату, получение данных об оплате")
+Rel(apiGateway, subscriptionService, "Хранение, обработка и получение данных о подписках, осуществление подписки")
+Rel(apiGateway, analyticsService, "Сбор и обработка аналитических данных действий пользователя")
+Rel(analyticsService, rabbit, "Отправка аналитических данных, получение подборки")
+Rel(movieService, contentSources, "Получение данных о медиа-контенте из внешних источников")
+Rel(paymentService, extPaymentSystem, "Отправка запросов на осуществление платежей")
+Rel(rabbit, recommendationSystem, "Передача аналитических данных, сбор подборок для пользователей")
+
+@enduml

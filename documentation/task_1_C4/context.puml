@@ -1,0 +1,21 @@
+@startuml
+title Контекст Cinema Abyss
+top to bottom direction
+
+!include ../c4_templates/C4_Component.puml
+
+Person(user, "Пользователь", "Просматривает и оценивает медиа, приобретает подписки.")
+Person(admin, "Администратор", "Администрирует систему")
+System(app, "Приложение Cinema Abyss", "Стриминговый агрегатор, предоставляет медиа-контент с разных площадок")
+
+System_Ext(recommendationService, "Сервис рекомендаций", "Вычисляет и предоставляет рекомендации пользователям")
+System_Ext(paymentSystem, "Платежная система", "Обработка и осуществление платежей")
+System_Ext(contentSources, "Источники контента", "Сторонние онлайн-кинотеатры и прочие площадки с медиа-контентом")
+
+Rel(user, app, "Использует приложение")
+Rel(admin, app, "Администрирует приложение")
+Rel(app, recommendationService, "Отправляет данные по просмотрам пользователя. Получает подборку рекомендаций")
+Rel(app, paymentSystem, "Отправляет запросы на оплату")
+Rel(app, contentSources, "Получает медиа-контент")
+
+@enduml
