@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: events
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+
+logging:
+  level:
+    cinema.abyss.events: DEBUG
