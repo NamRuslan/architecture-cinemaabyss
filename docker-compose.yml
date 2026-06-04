@@ -31,7 +31,7 @@ services:
     networks:
       - cinemaabyss-network
 
-  # Kafka
+#   Kafka
   kafka:
     image: wurstmeister/kafka:2.13-2.7.0
     container_name: cinemaabyss-kafka

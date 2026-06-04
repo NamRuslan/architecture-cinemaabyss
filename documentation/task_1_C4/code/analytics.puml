@@ -1,0 +1,48 @@
+@startuml
+
+title Диаграмма классов
+top to bottom direction
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+package "Сервис аналитики" <<Rectangle>> {
+    package analytics {
+        package model {
+            package request {
+                package userview {}
+                package userrating {}
+            }
+            package response {
+                package userview {}
+                package userrating {}
+            }
+        }
+
+        class AnalyticsController
+        class AnalyticsService
+        class UserViewRepo
+        class UserRatingRepo
+        class RecommendationServiceRabbitMqAdapter
+
+        model.request --> AnalyticsController : получает запросы
+        AnalyticsController --> model.response : отдает ответы
+
+        AnalyticsController --> AnalyticsService : передает запросы на обработку
+        AnalyticsService --> UserRatingRepo : сохраняет и получает данные
+        AnalyticsService --> UserViewRepo : сохраняет и получает данные
+        AnalyticsService --> RecommendationServiceRabbitMqAdapter : передает аналитические данные
+
+        note "пакеты со стандартными CRUD: запросы/ответы" as standard_crud_note
+        standard_crud_note .. model.request.userview
+        standard_crud_note .. model.response.userview
+        standard_crud_note .. model.request.userrating
+        standard_crud_note .. model.response.userrating
+    }
+}
+
+circle RabbitMQ
+
+RabbitMQ --> RecommendationServiceRabbitMqAdapter : передает сформированные рекомендации
+
+
+@enduml

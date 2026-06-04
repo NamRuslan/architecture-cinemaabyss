@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: proxy
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: monolith
+              uri: ${MONOLITH_URL}
+              order: 100
+              predicates:
+                - Path=/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    cinema.abyss.proxy: DEBUG
+
+load_balance:
+  movies:
+    migration_percent: ${MOVIES_MIGRATION_PERCENT}
+    url: ${MOVIES_SERVICE_URL}
+  monolith:
+    url: ${MONOLITH_URL}
+
+
